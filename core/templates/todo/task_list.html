@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tasks</title>
+  </head>
+  <body>
+    <div>
+    <ul>
+        {% for task in tasks %}
+            {% if not task.completed %}
+                <p><li>{{task.title}}</li></p>
+                <p>
+                    <i><a href="{% url 'todo:task-edit' pk=task.id %}">edit</a></i>
+                    <i><a href="{% url 'todo:task-delete' pk=task.id %}">delete</a></i>
+                </p>
+            {% else %}
+                <p>
+                    <li><s>{{task.title}}</s></li>
+                </p>
+                <p>
+                <i><a href="{% url 'todo:task-edit' pk=task.id %}">edit</a></i>
+                <i><a href="{% url 'todo:task-delete' pk=task.id %}">delete</a></i>
+                </p>
+            {% endif %}
+            {% empty %}
+            <p>No tasks yet!</p>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'todo:task-create' %}">Create new task</a></p>
+</div>
+<div>
+    <p><a href="{% url 'accounts:logout' %}">Logout</a></p>
+</div>
+  </body>
+</html>
