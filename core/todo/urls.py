@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from todo import views
 from django.views.generic.base import RedirectView
 
@@ -12,4 +12,5 @@ urlpatterns = [
          views.TaskEditView.as_view(), name='task-edit'),
     path('tasks/<int:pk>/delete/',
          views.TaskDeleteView.as_view(), name='task-delete'),
+    path('tasks/api/v1/', include('todo.api.v1.urls')),
 ]
