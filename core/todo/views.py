@@ -14,7 +14,7 @@ class TaskList(LoginRequiredMixin, ListView):
     template_name = "todo/task_list.html"
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user.id)
+        return self.model.objects.filter(author=self.request.user.id)
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
@@ -23,7 +23,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     success_url = '/'
 
     def form_valid(self, form):
-        form.instance.user = Profile.objects.get(user=self.request.user)
+        form.instance.author = Profile.objects.get(user=self.request.user)
         return super().form_valid(form)
 
 
