@@ -25,7 +25,7 @@ SECRET_KEY = config("SECRET_KEY", default="test")
 # "django-insecure-5&a$t@2isan6@yolrv8ot!&cx@+e9-(lltj0bss%a3+@2z2@(+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default='*')
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "accounts",
     "todo",
 ]
