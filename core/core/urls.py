@@ -28,12 +28,12 @@ from drf_yasg import openapi
 # Configure Swagger/OpenAPI documentation
 schema_view = get_schema_view(
     openapi.Info(
-        title="Snippets API",
+        title="Tasks API Documentation",
         default_version='v1',
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
+        description="API documentation for Tasks",
+        terms_of_service="none available",
+        contact=openapi.Contact(email="a@aa.com"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
