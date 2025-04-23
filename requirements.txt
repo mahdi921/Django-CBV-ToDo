@@ -13,3 +13,6 @@ markdown
 django-filter
 drf-yasg
 drf-yasg[validation]
+djangorestframework-simplejwt
+django-mail-templated
+djoser
