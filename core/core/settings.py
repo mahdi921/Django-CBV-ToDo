@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    'mail_templated'
+    'mail_templated',
     "accounts",
     "todo",
 ]
@@ -174,4 +174,26 @@ EMAIL_PORT = 25
 # }
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+# Logging cnfigs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 }
