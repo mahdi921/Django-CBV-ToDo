@@ -31,10 +31,16 @@
     <p><a href="{% url 'todo:task-create' %}">Create new task</a></p>
 </div>
 <div>
-    <p><a href="{% url 'accounts:logout' %}">Logout</a></p>
+    <form method="POST" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="Logout" />
+    </form>
 </div>
 <div>
     <p><a href="{% url 'todo:api-v1:task-list' %}">API</a></p>
 </div>
+    <p><a href="{% url 'todo:index' %}">Home</a></p>
+    <p><a href="{% url 'schema-swagger-ui' %}">Swagger Docs</a></p>
+    <p><a href="{% url 'schema-redoc' %}">Redoc Docs</a></p>
   </body>
 </html>

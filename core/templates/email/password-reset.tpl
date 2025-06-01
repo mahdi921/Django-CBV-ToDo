@@ -7,7 +7,7 @@ Account Activation
 {% block html %}
 To reset your password, please click the link below:
 <br><br>
-<a href="http://localhost:8000/accounts/api/v1/reset-password/confirm/{{token}}">
+<a href="{{link}}">
     Reset Password
 </a>
 <br><br>

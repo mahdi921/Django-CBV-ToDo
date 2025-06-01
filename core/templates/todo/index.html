@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Index</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+    <p><a href="{% url 'todo:task-list' %}">Tasks</a></p>
+    <form method="POST" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="Logout" />
+    </form>    {% else %}
+    <p><a href="{% url 'accounts:login' %}">Login</a></p>
+    <p><a href="{% url 'accounts:signup' %}">Sign Up</a></p>
+    {% endif %}
+    <p><a href="{% url 'todo:api-v1:task-list' %}">ToDo API</a></p>
+    <p><a href="{% url 'schema-swagger-ui' %}">Swagger Docs</a></p>
+    <p><a href="{% url 'schema-redoc' %}">Redoc Docs</a></p>
+</body>
+</html>

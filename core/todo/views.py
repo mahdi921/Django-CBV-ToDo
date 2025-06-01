@@ -1,10 +1,21 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    TemplateView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Task
 from accounts.models import Profile
 from .forms import TaskForm
+from django.urls import reverse_lazy
 
 # Create your views here.
+
+
+class IndexView(TemplateView):
+    template_name = "todo/index.html"
 
 
 # TaskList view to list all tasks for a user
@@ -20,7 +31,7 @@ class TaskList(LoginRequiredMixin, ListView):
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
-    success_url = '/'
+    success_url = reverse_lazy("todo:task-list")
 
     def form_valid(self, form):
         form.instance.author = Profile.objects.get(user=self.request.user)
@@ -30,9 +41,9 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
 class TaskEditView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
-    success_url = '/'
+    success_url = reverse_lazy("todo:task-list")
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
-    success_url = '/'
+    success_url = reverse_lazy("todo:task-list")
