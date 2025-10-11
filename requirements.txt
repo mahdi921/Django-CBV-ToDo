@@ -19,3 +19,5 @@ djoser
 black
 flake8
 django-simple-captcha
+pytest
+pytest-django
