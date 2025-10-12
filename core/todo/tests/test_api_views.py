@@ -67,3 +67,8 @@ class TestTasksAPI:
         url = reverse('todo:api-v1:task-detail', kwargs={'pk': 1})
         response = api_client.delete(url)
         assert response.status_code == 204
+
+    def test_get_task_detail_response_unauth_401(self, api_client):
+        url = reverse('todo:api-v1:task-detail', kwargs={'pk': 1})
+        response = api_client.get(url)
+        assert response.status_code == 401
