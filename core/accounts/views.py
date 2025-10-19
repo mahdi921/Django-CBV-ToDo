@@ -26,7 +26,8 @@ class SignUpView(CreateView):
     success_url = "/accounts/login/"
 
     def form_valid(self, form):
-        messages.success(self.request, "Your account has been created successfully.")
+        messages.success(
+            self.request, "Your account has been created successfully.")
         return super().form_valid(form)
 
     def form_invalid(self, form):

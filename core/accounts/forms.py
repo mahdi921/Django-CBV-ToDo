@@ -1,7 +1,7 @@
 # from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
-from captcha.fields import CaptchaField
+# from captcha.fields import CaptchaField
 
 User = get_user_model()
 
@@ -11,7 +11,7 @@ class CustomLoginForm(AuthenticationForm):
     adding captcha field to the login form
     """
 
-    captcha = CaptchaField()
+    # captcha = CaptchaField()
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -20,7 +20,7 @@ class UserRegistrationForm(UserCreationForm):
     fields, plus a repeated password.
     """
 
-    captcha = CaptchaField()
+    # captcha = CaptchaField()
 
     class Meta:
         model = User
