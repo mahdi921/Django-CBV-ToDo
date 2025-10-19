@@ -4,25 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-      <!-- message here -->
-
-  {% if messages %}
-  {% for message in messages %}
-
-  <script>
-    alert("{{ message }}");
-  </script>
-
-  {% endfor %}
-  {% endif %}
-
-  <!--_______________________________________________-->
   </head>
   <body>
     <form method="post">
       {% csrf_token %} {{ form.as_p }}
       <input type="submit" value="Login" />
     </form>
-    <p>custom login</p>
   </body>
 </html>
