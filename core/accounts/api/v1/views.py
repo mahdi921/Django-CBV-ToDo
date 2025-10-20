@@ -101,8 +101,7 @@ class ActivationApiView(APIView):
     def get(self, request, token, *args, **kwargs):
         """Activate a user account using the token provided in the URL."""
         try:
-            token = jwt.decode(token, config(
-                "SECRET_KEY"), algorithms=["HS256"])
+            token = jwt.decode(token, config("SECRET_KEY"), algorithms=["HS256"])
             user_id = token.get("user_id")
         except jwt.ExpiredSignatureError:
             return Response(
@@ -196,8 +195,7 @@ class ChangePasswordApiView(generics.GenericAPIView):
                     {"details": ["Old password is incorrect"]},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            self.object.set_password(
-                serializer.validated_data.get("new_password"))
+            self.object.set_password(serializer.validated_data.get("new_password"))
             self.object.save()
             data = {"details": "Password changed successfully"}
             return Response(data, status=status.HTTP_200_OK)
@@ -264,10 +262,7 @@ class ResetPasswordApiView(generics.GenericAPIView):
         Handle GET requests to prompt the user to enter their email
         for password reset.
         """
-        return Response(
-            {"details": "Enter Your Email"},
-            status=status.HTTP_200_OK
-        )
+        return Response({"details": "Enter Your Email"}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """

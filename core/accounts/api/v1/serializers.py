@@ -17,8 +17,7 @@ from captcha.serializers import CaptchaSerializer, CaptchaModelSerializer
 User = get_user_model()
 
 
-class RegistrationSerializer(CaptchaModelSerializer,
-                             serializers.ModelSerializer):
+class RegistrationSerializer(CaptchaModelSerializer, serializers.ModelSerializer):
     """
     Serializer for user registration
     """
@@ -95,9 +94,7 @@ class ChangePasswordSerializer(CaptchaSerializer, serializers.Serializer):
         try:
             validate_password(attrs.get("new_password"))
         except exceptions.ValidationError as e:
-            raise serializers.ValidationError({
-                "new_password": list(e.messages)
-            })
+            raise serializers.ValidationError({"new_password": list(e.messages)})
         return super().validate(attrs)
 
 
