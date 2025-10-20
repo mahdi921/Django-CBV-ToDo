@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from todo.models import Task
 from accounts.models import User, Profile
 import random
-from django.utils import timezone
 
 
 class Command(BaseCommand):
@@ -15,8 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         user = User.objects.create_user(
-            email=self.fake.email(),
-            password="Fakepass@123456"
+            email=self.fake.email(), password="Fakepass@123456"
         )
         profile = Profile.objects.get(user=user)
         profile.first_name = self.fake.first_name()

@@ -4,10 +4,7 @@ from accounts.models import Profile
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    relative_url = serializers.URLField(
-        source="get_absolute_api_url",
-        read_only=True
-        )
+    relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
     absolute_url = serializers.SerializerMethodField()
 
     class Meta:
