@@ -10,7 +10,7 @@ services:
   celery:
     build: .
     container_name: todo-celery-worker
-    command: celery -A core worker -l INFO
+    command: celery -A core worker -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     restart: always
     depends_on:
       - backend
