@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
     "mail_templated",
+    'django_celery_beat',
     "accounts",
     "todo",
     "captcha",
@@ -201,3 +202,8 @@ LOGGING = {
         },
     },
 }
+
+
+# celery configs
+
+CELERY_BROKER_URL = "redis://redis:6379/1"
