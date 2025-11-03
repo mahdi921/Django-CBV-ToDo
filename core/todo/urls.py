@@ -4,6 +4,7 @@ from todo import views
 app_name = "todo"
 
 urlpatterns = [
+    path("delete-tasks", views.deleteDoneTasks, name="delete-tasks"),
     path("", views.IndexView.as_view(), name="index"),
     path("tasks/", views.TaskList.as_view(), name="task-list"),
     path("tasks/create/", views.TaskCreateView.as_view(), name="task-create"),

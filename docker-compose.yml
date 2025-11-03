@@ -1,4 +1,23 @@
 services:
+  redis:
+    image: redis:8.2.2-alpine
+    container_name: todo-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    restart: always
+  
+  celery:
+    build: .
+    container_name: todo-celery-worker
+    command: celery -A core worker -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    restart: always
+    depends_on:
+      - backend
+      - redis
+    volumes: 
+      - ./core:/app
+
   backend:
     build: .
     container_name: todo-backend
@@ -12,6 +31,8 @@ services:
     environment:
       - SECRET_KEY=test
       - DEBUG=True
+    depends_on:
+      - redis
   smtp4dev:
       image: rnwood/smtp4dev:v3
       restart: always

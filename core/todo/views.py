@@ -10,8 +10,15 @@ from .models import Task
 from accounts.models import Profile
 from .forms import TaskForm
 from django.urls import reverse_lazy
+from django.http import HttpResponse
+from todo.task import delete_done_tasks
 
 # Create your views here.
+
+
+def deleteDoneTasks(request):
+    delete_done_tasks.delay()
+    return HttpResponse("<h1>Tasks Deleted!</h1>")
 
 
 class IndexView(TemplateView):
