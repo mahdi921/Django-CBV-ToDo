@@ -22,3 +22,6 @@ django-simple-captcha
 pytest
 pytest-django
 Faker
+Redis
+celery
+django-celery-beat
