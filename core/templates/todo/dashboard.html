@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - TaskMaster{% endblock %}
+
+{% block content %}
+<div class="todo-header">
+    <div style="flex: 1;">
+        <h1 style="margin-bottom: 0.5rem;">My Tasks</h1>
+        <p class="text-muted">{{ tasks_completed }} of {{ tasks_total }} tasks completed</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <a href="{% url 'accounts:change-password' %}" class="btn btn-outline" style="text-decoration: none;">
+            Change Password
+        </a>
+        <button onclick="app.showAddTaskModal()" class="btn btn-primary">
+            <span style="font-size: 1.25rem; margin-right: 0.5rem;">+</span> New Task
+        </button>
+    </div>
+</div>
+
+<div class="tasks-container">
+    {% for task in tasks %}
+    <div class="task-card {% if task.completed %}completed{% endif %}">
+        <form method="post" action="{% url 'todo:task-toggle' task.id %}" style="display: flex; align-items: center;">
+            {% csrf_token %}
+            <input type="checkbox" class="task-checkbox" {% if task.completed %}checked{% endif %}
+                onchange="this.form.submit()" style="margin: 0;">
+        </form>
+
+        <div class="task-content">
+            <div class="task-title">{{ task.title }}</div>
+            <div class="task-meta">
+                <span>Created {{ task.created_date|timesince }} ago</span>
+                <span>•</span>
+                <span>Updated {{ task.updated_date|timesince }} ago</span>
+            </div>
+        </div>
+
+        <div class="task-actions" style="opacity: 1;"> <!-- Always visible for MPA for better UX -->
+            <button onclick="app.showAddAssignmentModal({{ task.id }})" class="icon-btn" title="Add Sub-task">
+                ➕
+            </button>
+            <form method="post" action="{% url 'todo:task-delete' task.id %}"
+                onsubmit="return confirm('Delete this task?');" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="icon-btn" style="color: var(--danger);" title="Delete Task">🗑️</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assignments List -->
+    {% if task.assignments.all %}
+    <div class="assignments-list"
+        style="margin-left: 2.5rem; margin-top: -0.5rem; margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--border);">
+        {% for assignment in task.assignments.all %}
+        <div id="assignment-{{ assignment.id }}" class="assignment-item"
+            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;">
+            <input type="checkbox" class="assignment-checkbox" {% if assignment.completed %}checked{% endif %}
+                onchange="app.toggleAssignment({{ assignment.id }}, this.checked)">
+
+            <span class="assignment-text"
+                style="flex: 1; font-size: 0.9rem; {% if assignment.completed %}text-decoration: line-through; opacity: 0.7;{% endif %}">
+                {{ assignment.description }}
+            </span>
+
+            <button onclick="app.deleteAssignment({{ assignment.id }})" class="icon-btn"
+                style="font-size: 0.8rem; padding: 0.2rem;">✕</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% empty %}
+    <div
+        style="text-align: center; padding: 4rem; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 1rem;">
+        <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">No tasks yet</p>
+        <p>Create your first task to get started!</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+{% include 'includes/pagination.html' %}
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Define showAddTaskModal in extra_js so it runs after app.js
+    app.showAddTaskModal = function () {
+        const content = `
+            <form method="post" action="{% url 'todo:task-create' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="title" class="modal-input" placeholder="What needs to be done?" required autofocus>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="app.closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </div>
+            </form>
+        `;
+        app.showModal('Create New Task', content, '');
+    };
+</script>
+{% endblock %}

@@ -48,10 +48,13 @@ class RegistrationSerializer(CaptchaModelSerializer, serializers.ModelSerializer
             validate_password(password=attrs.get("password"))
         except exceptions.ValidationError as e:
             raise serializers.ValidationError({"password": list(e.messages)})
-        return super().validate(attrs)
+        return attrs
 
     def create(self, validated_data):
-        """create the user"""
+        """Create user after removing captcha fields"""
+        # Remove captcha fields as they're only for validation, not user creation
+        validated_data.pop("captcha_code", None)
+        validated_data.pop("captcha_hashkey", None)
         validated_data.pop("password1", None)
         return User.objects.create_user(**validated_data)
 

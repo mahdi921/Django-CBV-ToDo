@@ -4,15 +4,17 @@ from todo import views
 app_name = "todo"
 
 urlpatterns = [
-    path("delete-tasks", views.deleteDoneTasks, name="delete-tasks"),
-    path("", views.IndexView.as_view(), name="index"),
-    path("tasks/", views.TaskList.as_view(), name="task-list"),
+    # Dashboard (Root URL)
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
+    
+    # Redirect root to dashboard (handled by core.urls usually, but for app isolation)
+    path("", views.DashboardView.as_view(), name="index"),
+    
+    # Task Actions
     path("tasks/create/", views.TaskCreateView.as_view(), name="task-create"),
-    path("tasks/<int:pk>/edit/", views.TaskEditView.as_view(), name="task-edit"),
-    path(
-        "tasks/<int:pk>/delete/",
-        views.TaskDeleteView.as_view(),
-        name="task-delete",
-    ),
+    path("tasks/toggle/<int:pk>/", views.TaskToggleView.as_view(), name="task-toggle"),
+    path("tasks/delete/<int:pk>/", views.TaskDeleteView.as_view(), name="task-delete"),
+    
+    # API Patterns
     path("tasks/api/v1/", include("todo.api.v1.urls")),
 ]

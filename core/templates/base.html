@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TaskMaster{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modals.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    {% include 'includes/navbar.html' %}
+    {% endif %}
+
+    <div class="container">
+        {% include 'includes/messages.html' %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/auth.js' %}"></script>
+    <script src="{% static 'js/tasks.js' %}"></script>
+    <script src="{% static 'js/ui.js' %}"></script>
+
+    <!-- CSRF Token for AJAX -->
+    <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+            document.cookie.match(/csrftoken=([^;]+)/)?.[1];
+
+        // Add CSRF to all fetch requests
+        const originalFetch = window.fetch;
+        window.fetch = function (url, init) {
+            if (init && init.method && init.method !== 'GET') {
+                init.headers = {
+                    ...init.headers,
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                };
+            }
+            return originalFetch(url, init);
+        };
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

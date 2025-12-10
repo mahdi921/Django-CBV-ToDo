@@ -1,0 +1,54 @@
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page=1" class="pagination-btn">« First</a>
+    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">‹ Prev</a>
+    {% else %}
+    <span class="pagination-btn disabled" style="opacity: 0.5; pointer-events: none;">« First</span>
+    <span class="pagination-btn disabled" style="opacity: 0.5; pointer-events: none;">‹ Prev</span>
+    {% endif %}
+
+    <span class="pagination-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">Next ›</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-btn">Last »</a>
+    {% else %}
+    <span class="pagination-btn disabled" style="opacity: 0.5; pointer-events: none;">Next ›</span>
+    <span class="pagination-btn disabled" style="opacity: 0.5; pointer-events: none;">Last »</span>
+    {% endif %}
+</div>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 2rem 0;
+    }
+
+    .pagination-btn {
+        padding: 0.5rem 1rem;
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        color: var(--text-main);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+
+    .pagination-btn:hover {
+        border-color: var(--primary);
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--text-main);
+    }
+
+    .pagination-info {
+        color: var(--text-muted);
+        padding: 0 1rem;
+        font-size: 0.9rem;
+    }
+</style>

@@ -1,28 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-      <!-- message here -->
+{% extends 'base.html' %}
+{% load static %}
 
-  {% if messages %}
-  {% for message in messages %}
+{% block title %}Login - TaskMaster{% endblock %}
 
-  <script>
-    alert("{{ message }}");
-  </script>
+{% block content %}
+<div class="auth-container">
+  <div class="auth-header">
+    <h1>Welcome Back</h1>
+    <p class="text-muted">Sign in to continue to your workspace</p>
+  </div>
 
-  {% endfor %}
-  {% endif %}
+  <form method="post" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
 
-  <!--_______________________________________________-->
-  </head>
-  <body>
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
-      <input type="submit" value="Login" />
-    </form>
-    <p>custom login</p>
-  </body>
-</html>
+    {% if form.non_field_errors %}
+    <div class="toast error show" style="position: static; transform: none; margin-bottom: 1rem; width: 100%;">
+      {{ form.non_field_errors.0 }}
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="{{ form.username.id_for_label }}" class="text-muted">Email address</label>
+      <input type="email" name="username" id="{{ form.username.id_for_label }}"
+        value="{{ form.username.value|default:'' }}" required autofocus>
+      {% if form.username.errors %}
+      <div class="text-danger small">{{ form.username.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.password.id_for_label }}" class="text-muted">Password</label>
+      <input type="password" name="password" id="{{ form.password.id_for_label }}" required>
+      {% if form.password.errors %}
+      <div class="text-danger small">{{ form.password.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    {% if form.captcha %}
+    <div class="form-group">
+      <label class="text-muted">Security Check</label>
+      {{ form.captcha }}
+      {% if form.captcha.errors %}
+      <div class="text-danger small">{{ form.captcha.errors.0 }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+
+    <div class="auth-links" style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+      <a href="{% url 'accounts:forgot-password' %}" style="color: var(--primary);">Forgot Password?</a>
+      <span class="text-muted" style="margin: 0 0.5rem;">|</span>
+      <span class="text-muted">New here? <a href="{% url 'accounts:register' %}" style="color: var(--primary);">Create
+          Account</a></span>
+    </div>
+  </form>
+</div>
+{% endblock %}

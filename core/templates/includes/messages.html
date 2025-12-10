@@ -1,0 +1,19 @@
+{% if messages %}
+<div id="messages-container">
+    {% for message in messages %}
+    <div class="toast show {{ message.tags }}" style="top: {{ forloop.counter0|add:2 }}rem;">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <script>
+        // Auto-hide Django messages after 3 seconds
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('#messages-container .toast');
+            toasts.forEach(t => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 300);
+            });
+        }, 3000);
+    </script>
+</div>
+{% endif %}

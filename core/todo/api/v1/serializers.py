@@ -1,11 +1,27 @@
 from rest_framework import serializers
-from todo.models import Task
+from todo.models import Task, Assignment
 from accounts.models import Profile
+
+
+class AssignmentSerializer(serializers.ModelSerializer):
+    """Serializer for Assignment model"""
+    class Meta:
+        model = Assignment
+        fields = [
+            "id",
+            "description",
+            "completed",
+            "created_at",
+            "updated_at",
+            "order",
+        ]
+        read_only_fields = ("created_at", "updated_at")
 
 
 class TaskSerializer(serializers.ModelSerializer):
     relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
     absolute_url = serializers.SerializerMethodField()
+    assignments = AssignmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
@@ -18,8 +34,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "updated_date",
             "relative_url",
             "absolute_url",
+            "assignments",
         ]
-        read_only_fields = ("author",)
+        read_only_fields = ("author", "created_date", "updated_date")
 
     def create(self, validated_data):
         validated_data["author"] = Profile.objects.get(
