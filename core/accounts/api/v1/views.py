@@ -17,6 +17,8 @@ from accounts.models import Profile
 import jwt
 from django.utils.http import urlsafe_base64_decode
 from decouple import config
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -334,3 +336,31 @@ class ResetPasswordConfirmApiView(generics.GenericAPIView):
         """
         token_generator = PasswordResetTokenGenerator()
         return token_generator.check_token(user, token)
+
+
+class CaptchaRefreshView(APIView):
+    """
+    API view to generate and return CAPTCHA data for registration forms.
+    Returns JSON with CAPTCHA key and image URL.
+    """
+
+    permission_classes = []  # Allow unauthenticated access
+
+    def get(self, request, *args, **kwargs):
+        """Generate a new CAPTCHA and return the key and image URL."""
+        try:
+            # Generate a new CAPTCHA key using django-simple-captcha
+            key = CaptchaStore.generate_key()
+
+            # Get the image URL for this CAPTCHA
+            image_url = captcha_image_url(key)
+
+            return Response(
+                {"key": key, "image_url": image_url}, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            logger.error(f"Error generating CAPTCHA: {str(e)}", exc_info=True)
+            return Response(
+                {"details": "Failed to generate CAPTCHA"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

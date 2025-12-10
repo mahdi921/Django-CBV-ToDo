@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account - TaskMaster{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h1>Create Account</h1>
+        <p class="text-muted">Join TaskMaster today</p>
+    </div>
+
+    <form method="post" action="{% url 'accounts:register' %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="toast error show" style="position: static; transform: none; margin-bottom: 1rem; width: 100%;">
+            {{ form.non_field_errors.0 }}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="text-muted">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <small class="text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+            <div class="text-danger small">{{ field.errors.0 }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account</button>
+
+        <div class="auth-links" style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+            <span class="text-muted">Already have an account? <a href="{% url 'accounts:login' %}"
+                    style="color: var(--primary);">Sign In</a></span>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "mail_templated",
     'django_celery_beat',
+    "corsheaders",  # Added CORS headers
     "accounts",
     "todo",
     "captcha",
@@ -55,12 +56,23 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Added CORS middleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# CORS Configuration
+# Allow specific origins for frontend in Docker and local development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://frontend:80",
+    "http://todo-frontend:80",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "core.urls"
 
@@ -139,6 +151,11 @@ STATICFILES_DIRS = [
     BASE_DIR / "staticfiles",
 ]
 
+# Login/Logout redirects
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -177,8 +194,15 @@ PASSWORD_RESET_TIMEOUT = 300
 #     'SEND_ACTIVATION_EMAIL': True,
 #     'SERIALIZERS': {},
 # }
+from datetime import timedelta
+
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("JWT",),
+    "AUTH_HEADER_TYPES": ("JWT", "Bearer"),  # Support both JWT and Bearer
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # Access token valid for 1 hour
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh token valid for 7 days
+    "ROTATE_REFRESH_TOKENS": True,  # Generate new refresh token on refresh
+    "BLACKLIST_AFTER_ROTATION": True,  # Blacklist old refresh tokens after rotation
+    "UPDATE_LAST_LOGIN": False,  # Don't update last_login on token refresh
 }
 
 # Logging cnfigs
@@ -207,3 +231,19 @@ LOGGING = {
 # celery configs
 
 CELERY_BROKER_URL = "redis://redis:6379/1"
+
+# Celery Beat Schedule for periodic tasks
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-expired-jwt-tokens': {
+        'task': 'cleanup_expired_jwt_tokens',
+        'schedule': crontab(hour=2, minute=0),  # Daily at 2:00 AM UTC
+        'options': {
+            'expires': 3600,  # Task expires after 1 hour if not executed
+        }
+    },
+}
+
+# Use database scheduler for persistence across restarts
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

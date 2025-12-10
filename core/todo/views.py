@@ -1,56 +1,54 @@
-from django.views.generic import (
-    ListView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    TemplateView,
-)
+from django.views.generic import ListView, View, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Task
-from accounts.models import Profile
-from .forms import TaskForm
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.http import HttpResponse
-from todo.task import delete_done_tasks
+from django.contrib import messages
+from .models import Task
+from .forms import TaskForm
+from accounts.models import Profile
 
-# Create your views here.
-
-
-def deleteDoneTasks(request):
-    delete_done_tasks.delay()
-    return HttpResponse("<h1>Tasks Deleted!</h1>")
-
-
-class IndexView(TemplateView):
-    template_name = "todo/index.html"
-
-
-# TaskList view to list all tasks for a user
-class TaskList(LoginRequiredMixin, ListView):
+class DashboardView(LoginRequiredMixin, ListView):
     model = Task
+    template_name = "todo/dashboard.html"
     context_object_name = "tasks"
-    template_name = "todo/task_list.html"
-
+    paginate_by = 5
+    
     def get_queryset(self):
-        return self.model.objects.filter(author=self.request.user.id)
-
+        # Task.author is a Profile, not User. Fetch the profile first.
+        profile = get_object_or_404(Profile, user=self.request.user)
+        return Task.objects.filter(author=profile).prefetch_related('assignments').order_by('-created_date')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_tasks = self.get_queryset()
+        context['tasks_total'] = user_tasks.count()
+        context['tasks_completed'] = user_tasks.filter(completed=True).count()
+        return context
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
-    form_class = TaskForm
-    success_url = reverse_lazy("todo:task-list")
-
+    fields = ['title']
+    success_url = reverse_lazy("todo:dashboard")
+    
     def form_valid(self, form):
-        form.instance.author = Profile.objects.get(user=self.request.user)
+        # Assign the profile instance, not the user instance
+        profile = get_object_or_404(Profile, user=self.request.user)
+        form.instance.author = profile
+        messages.success(self.request, "Task created successfully!")
         return super().form_valid(form)
 
+class TaskToggleView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        profile = get_object_or_404(Profile, user=request.user)
+        task = get_object_or_404(Task, pk=kwargs['pk'], author=profile)
+        task.completed = not task.completed
+        task.save()
+        return redirect('todo:dashboard')
 
-class TaskEditView(LoginRequiredMixin, UpdateView):
-    model = Task
-    form_class = TaskForm
-    success_url = reverse_lazy("todo:task-list")
-
-
-class TaskDeleteView(LoginRequiredMixin, DeleteView):
-    model = Task
-    success_url = reverse_lazy("todo:task-list")
+class TaskDeleteView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        profile = get_object_or_404(Profile, user=request.user)
+        task = get_object_or_404(Task, pk=kwargs['pk'], author=profile)
+        task.delete()
+        messages.success(request, "Task deleted.")
+        return redirect('todo:dashboard')

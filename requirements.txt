@@ -25,3 +25,4 @@ Faker
 Redis
 celery
 django-celery-beat
+django-cors-headers

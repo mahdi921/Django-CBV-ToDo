@@ -1,0 +1,14 @@
+<nav>
+    <div class="container nav-content">
+        <a href="{% url 'todo:dashboard' %}" class="logo">TaskMaster</a>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <span class="text-muted" id="profile-email">{{ user.email }}</span>
+            <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
